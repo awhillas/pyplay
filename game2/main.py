@@ -1,18 +1,51 @@
 import argparse
+import os
 import sys
 
-from loguru import logger
+import pygame as pg
+from loguru import logger as log
 
-# See: https://github.com/Delgan/loguru
-logger.add(sys.stderr, format="{time} {level} {message}", filter="my_module", level="INFO")
+os.environ["SDL_VIDEO_CENTERED"] = "1"
 
-def main(config):
-    logger.debug("Lets get this party started {}!", config)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("config", help="Path to config file")
-    args = parser.parse_args()
+class App:
+    def __init__(self):
+        self.is_running = True
+        self._display_surf = None
+        self.size = self.weight, self.height = 1280, 1024
 
-    main(**vars(args))
+    def init(self):
+        pg.init()
+        self._display_surf = pg.display.set_mode(self.size, pg.HWSURFACE | pg.DOUBLEBUF)
+        self.is_running = True
 
+    def event(self, event):
+        if event.type == pg.QUIT:
+            self.is_running = False
+
+    def loop(self):
+        pass
+
+    def render(self):
+        pass
+
+    def cleanup(self):
+        pg.quit()
+
+    def execute(self):
+        if self.init() == False:
+            self.is_running = False
+
+        while self.is_running:
+            for event in pg.event.get():
+                self.event(event)
+            self.loop()
+            self.render()
+        self.cleanup()
+
+    pg.quit()
+
+
+if __name__ == "__main__":
+    theApp = App()
+    theApp.execute()
